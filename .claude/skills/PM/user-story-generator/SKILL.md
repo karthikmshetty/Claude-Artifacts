@@ -9,7 +9,9 @@ description: >
   format (As a / I want / So that) with Conditions of Satisfaction (COS).
   Trigger when the user says: "write a user story", "generate user stories", "create stories for",
   "build a backlog for", "split this epic", "break this into stories", or any similar phrase
-  requesting Agile story generation. Execute the full workflow automatically.
+  requesting Agile story generation. Also accepts meeting transcripts, product KT notes, or
+  requirement documents as input and extracts all necessary information automatically.
+  Execute the full workflow automatically.
 compatibility: "No external MCPs required. Works standalone - input is provided directly in the chat."
 tags: [BA, agile, stories, epics, INVEST, SPIDR]
 ---
@@ -37,7 +39,7 @@ Execute these steps in order. Do not skip any step.
 
 ### Step 1 — Parse the Input
 
-Read the feature description, initiative brief, or rough idea provided by the user.
+Read the feature description, initiative brief, meeting transcript, or rough idea provided by the user.
 
 Extract or infer:
 - The overall goal or initiative
@@ -191,7 +193,7 @@ Conditions of Satisfaction are **business-level acceptance conditions** — not 
 ## Full Example
 
 ### Input:
-> "We need to build an onboarding experience for new users signing up to our SaaS platform."
+> "ABC firm is a lens manufacturing firm who wants to build an order management system, where they can invite store admins who can further go ahead and add their employees and provide the privilege accordingly. The employee can submit the order request from their portal which will go to the manufacturing admin to check and process that order."
 
 ---
 
@@ -199,9 +201,9 @@ Conditions of Satisfaction are **business-level acceptance conditions** — not 
 
 | Persona | Role Description | Key Goals | Pain Points Addressed |
 |---|---|---|---|
-| New End User | A user who has just created an account and is accessing the platform for the first time | Complete setup quickly and understand core features | Confusion and drop-off during first-time setup |
-| Admin | A tenant admin who manages the workspace and invites team members | Ensure the team is set up correctly from day one | Manual onboarding effort and inconsistent team setups |
-| Super Admin | Platform-level operator monitoring onboarding health across tenants | Track activation rates and identify drop-off points | Lack of visibility into the onboarding funnel |
+| **Manufacturing Admin** | ABC firm's platform-level administrator who manages the overall order management system | Invite and manage store admins, review and process incoming orders | No centralised system to manage store relationships and order pipeline |
+| **Store Admin** | Administrator of an individual lens store, invited by the Manufacturing Admin | Set up their store, manage their employees, and control access privileges | Manual processes for employee management and order submission |
+| **Employee** | A store staff member added by the Store Admin with assigned privileges | Submit lens order requests quickly and track their status | No dedicated portal to raise or track orders with the manufacturer |
 
 ---
 
@@ -209,50 +211,51 @@ Conditions of Satisfaction are **business-level acceptance conditions** — not 
 
 | Epic ID | Epic Title | Description | Primary Persona(s) | Business Value |
 |---|---|---|---|---|
-| E-1 | Account Setup & Profile Creation | Enable new users to complete their profile and configure basic account settings | New End User | Reduces time-to-value and improves activation rate |
-| E-2 | Guided Product Walkthrough | Provide an interactive tour of core platform features for first-time users | New End User | Increases feature adoption and reduces support tickets |
-| E-3 | Team Invitation & Workspace Setup | Allow Admins to invite team members and configure workspace defaults during onboarding | Admin | Accelerates team activation and reduces manual setup effort |
+| E-1 | Store Admin Onboarding | Enable Manufacturing Admin to invite and onboard Store Admins onto the platform | Manufacturing Admin | Establishes the store network on the platform with controlled access |
+| E-2 | Employee Management & Privilege Control | Allow Store Admins to add employees to their store and assign role-based privileges | Store Admin | Gives stores control over who can access the platform and what they can do |
+| E-3 | Order Request Submission | Enable authorised Employees to submit lens order requests via their portal | Employee | Digitises and standardises the order intake process from stores |
+| E-4 | Order Review & Processing | Enable Manufacturing Admin to view, review, and process incoming order requests | Manufacturing Admin | Centralises order management and gives ABC full visibility over demand |
 
 ---
 
-### Epic E-1: Account Setup & Profile Creation
+### Epic E-1: Store Admin Onboarding
 
-> Enables a new user to complete their profile and configure essential account settings immediately after registration.
+> Enables the Manufacturing Admin to invite Store Admins to the platform so they can set up and manage their store.
 
-#### Story E-1.S-1: Complete Personal Profile on First Login
+#### Story E-1.S-1: Invite a Store Admin to the Platform
 
 **User Story:**
-> As a **New End User**,
-> I want to complete my profile details (name, role, and profile photo) on first login,
-> So that my colleagues and the platform can identify me correctly from day one.
+> As a **Manufacturing Admin**,
+> I want to invite a Store Admin to the platform by entering their details,
+> So that they can access the system and begin setting up their store.
 
 **Conditions of Satisfaction (COS):**
-1. On first login, the user is presented with a profile setup screen before accessing the main dashboard.
-2. The user can enter their full name, job title, and upload a profile photo.
-3. Full name and job title are mandatory; the form cannot be submitted without them.
-4. If an invalid image format is uploaded, the system displays a clear error and lists accepted formats.
-5. On successful save, the user is redirected to the next onboarding step.
-6. The user can skip the profile photo and complete it later from account settings.
+1. The Manufacturing Admin can enter a Store Admin's name, email address, and store name to send an invitation.
+2. The invited Store Admin receives an invitation email with a link to set up their account.
+3. The invitation link expires after 48 hours; the Manufacturing Admin can resend an expired invitation.
+4. If the email address is already registered on the platform, the system displays a clear error and prevents a duplicate invitation.
+5. The invited Store Admin appears in the Manufacturing Admin's store list with a status of "Pending" until they accept.
+6. Once the invitation is accepted, the status updates to "Active" and the Store Admin can log in.
 
 ---
 
-#### Story E-1.S-2: Set Notification Preferences During Onboarding
+#### Story E-1.S-2: Deactivate a Store Admin Account
 
 **User Story:**
-> As a **New End User**,
-> I want to set my notification preferences during onboarding,
-> So that I only receive communications relevant to my work from the start.
+> As a **Manufacturing Admin**,
+> I want to deactivate a Store Admin's account,
+> So that I can revoke platform access for stores that are no longer active or authorised.
 
 **Conditions of Satisfaction (COS):**
-1. The user is presented with a notification preferences screen as part of the onboarding flow.
-2. Options include email notifications, in-app notifications, and digest frequency (immediate, daily, weekly).
-3. Sensible defaults are pre-selected so the user can proceed without making changes.
-4. Preferences are saved and take effect immediately upon confirmation.
-5. The user can update these preferences at any time from account settings after onboarding.
+1. The Manufacturing Admin can deactivate any active Store Admin account from the store management screen.
+2. A confirmation prompt is shown before deactivation is applied.
+3. Upon deactivation, the Store Admin and all Employees under their store immediately lose access to the platform.
+4. Existing order requests submitted by the store's Employees are preserved and remain visible to the Manufacturing Admin.
+5. The deactivated store appears in the store list with a status of "Inactive" and can be reactivated by the Manufacturing Admin.
 
 ---
 
-> 📝 **Note:** This example shows stories for E-1 only. E-2 (Guided Product Walkthrough) and E-3 (Team Invitation & Workspace Setup) would follow the exact same pattern.
+> 📝 **Note:** This example shows stories for E-1 only. E-2 (Employee Management & Privilege Control), E-3 (Order Request Submission), and E-4 (Order Review & Processing) would follow the exact same pattern.
 
 ---
 
@@ -266,6 +269,7 @@ Conditions of Satisfaction are **business-level acceptance conditions** — not 
 | Input is clearly a single Epic | Generate one Epic and decompose it fully into stories |
 | A story is too large after internal INVEST check | Apply SPIDR silently and split before outputting |
 | User asks to skip COS | Generate story body only; note that COS is required before sprint commitment |
+| Input is a meeting transcript or KT document | Extract all requirements, personas, and scope from the transcript and proceed with the full workflow |
 
 ---
 
@@ -277,3 +281,4 @@ Conditions of Satisfaction are **business-level acceptance conditions** — not 
 - INVEST and SPIDR are internal quality checks — never surface them in the story output unless the user explicitly asks.
 - If the input contains compliance or security signals (GDPR, data deletion, access control, audit logging), always surface these explicitly in the relevant story's COS — never absorb them silently.
 - Story IDs use the format E-[EpicNumber].S-[StoryNumber] (e.g. E-1.S-2) to make traceability clear.
+- When a meeting transcript or product document is provided as input, extract all relevant information automatically without asking the user to reformat it.
